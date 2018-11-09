@@ -4,19 +4,28 @@ import os
 import time
 from threading import Thread
 
+#hosts to ping
 hosts = [ '8.8.8.8', '4.2.2.2', '1.2.3.4' ]
-trigger = "False"
+
+
+#number of fails before we activate relay
 max_fail = 3
+
+#percent of hosts that can be down before we consider it a failure
+threshold = .3
+
 fail = 0
+down = 0
+
+#GPIO pin
 GPIO = 7
 
 def ping(i):
     code = os.system('ping -c 3 ' + i + ' >/dev/null')
-    print("thread exited with code ", code)
+    print(i," ", code)
     if code > 0:
-        global trigger
-        trigger = "True"
-
+        global down
+        down += 1
 
 while True:
         for i in hosts:
@@ -27,12 +36,14 @@ while True:
 	#ensure all threads have finished
         t.join()
 
-        print("main script")
-	
-        if trigger == "True":
-            fail += 1
-            trigger = "False"
 
+        p = down / len(hosts)
+        if p >= threshold:
+            fail += 1
+
+        down = 0
+
+        print("percent failed: ", p)
         print("fails: ", fail)
 
         if fail == max_fail:
