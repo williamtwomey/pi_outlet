@@ -64,13 +64,15 @@ while True:
 
             if FAIL == MAX_FAIL:
                 print("max fails reached")
-                #os.system('gpio write 7 1') #else we get a brief power flicker when changing the mode
-                #os.system('gpio mode 7 out')
-                #os.system('gpio write 7 0')
+                ##else we get a brief power flicker when changing the mode
+                os.system('gpio write 7 1') 
+                os.system('gpio mode 7 out')
                 #Power off for 30 seconds
-                #time.sleep(30)
-                #os.system('gpio write 7 1') #turn it back on
-                #time.sleep(300) #sleep for 5min to give it a chance
+                os.system('gpio write 7 0')
+                time.sleep(30)
+                os.system('gpio write 7 1') 
+                #Sleep for 5 minutes to give modem a chance to come up
+                time.sleep(300) 
                 FAIL = 0
      
             #wait 30s to run main loop again
